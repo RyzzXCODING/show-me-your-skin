@@ -1,18 +1,14 @@
 package nl.enjarai.showmeyourskin.net;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import nl.enjarai.showmeyourskin.ShowMeYourSkin;
+import io.wispforest.owo.network.ServerAccess;
+import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 
-public record SettingsUpdatePacket(ArmorConfig settings) implements CustomPayload {
-    public static final Id<SettingsUpdatePacket> PACKET_ID = new Id<>(ShowMeYourSkin.id("settings_update"));
-    public static final PacketCodec<ByteBuf, SettingsUpdatePacket> PACKET_CODEC =
-            ArmorConfig.PACKET_CODEC.xmap(SettingsUpdatePacket::new, SettingsUpdatePacket::settings);
-
-    @Override
-    public Id<? extends CustomPayload> getId() {
-        return PACKET_ID;
-    }
+public record SettingsUpdatePacket(ArmorConfig settings) {
+  public void handleServer(ServerAccess access) {
+    var component = Components.ARMOR_CONFIG.get(access.player());
+    component.setConfig(settings());
+    component.ensureValid();
+    Components.ARMOR_CONFIG.sync(access.player());
+  }
 }

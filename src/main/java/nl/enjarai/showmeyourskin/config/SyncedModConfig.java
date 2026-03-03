@@ -1,27 +1,14 @@
 package nl.enjarai.showmeyourskin.config;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import io.wispforest.endec.Endec;
+import io.wispforest.endec.impl.StructEndecBuilder;
 
-public interface SyncedModConfig {
-    Codec<SyncedModConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.BOOL.optionalFieldOf("allowNotShowInCombat", true).forGetter(SyncedModConfig::allowNotShowInCombat),
-            Codec.BOOL.optionalFieldOf("allowNotShowNameTag", true).forGetter(SyncedModConfig::allowNotShowNameTag),
-            Codec.BOOL.optionalFieldOf("allowNotForceElytraWhenFlying", true).forGetter(SyncedModConfig::allowNotForceElytraWhenFlying)
-    ).apply(instance, SyncedModConfigClient::new));
-    PacketCodec<RegistryByteBuf, SyncedModConfig> PACKET_CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotShowInCombat,
-            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotShowNameTag,
-            PacketCodecs.BOOLEAN, SyncedModConfig::allowNotForceElytraWhenFlying,
-            SyncedModConfigClient::new
-    );
-
-    boolean allowNotShowInCombat();
-
-    boolean allowNotShowNameTag();
-
-    boolean allowNotForceElytraWhenFlying();
+public record SyncedModConfig(boolean allowNotShowInCombat, boolean allowNotShowNameTag,
+                              boolean allowNotForceElytraWhenFlying) {
+  public static final Endec<SyncedModConfig> ENDEC = StructEndecBuilder.of(
+    Endec.BOOLEAN.optionalFieldOf("allow_not_show_in_combat", SyncedModConfig::allowNotShowInCombat, true),
+    Endec.BOOLEAN.optionalFieldOf("allow_not_show_name_tag", SyncedModConfig::allowNotShowNameTag, true),
+    Endec.BOOLEAN.optionalFieldOf("allow_not_force_elytra_when_flying", SyncedModConfig::allowNotForceElytraWhenFlying, true),
+    SyncedModConfig::new
+  );
 }

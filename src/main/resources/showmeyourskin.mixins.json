@@ -4,6 +4,7 @@
   "package": "nl.enjarai.showmeyourskin.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "LivingEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -11,15 +12,6 @@
   "client": [
     "EntityRendererMixin",
     "LivingEntityMixin",
-    "LivingEntityRendererMixin",
-    "armor.ArmorFeatureRendererMixin",
-    "armor.EquipmentRendererMixin",
-    "elytra.CapeFeatureRendererMixin",
-    "elytra.ElytraFeatureRendererMixin",
-    "hat.HeadFeatureRendererMixin",
-    "hat.SkullBlockEntityRendererMixin",
-    "shield.BannerBlockEntityRendererMixin",
-    "shield.HeldItemFeatureRendererMixin",
-    "shield.ShieldModelRendererMixin"
+    "LivingEntityRendererMixin"
   ]
 }

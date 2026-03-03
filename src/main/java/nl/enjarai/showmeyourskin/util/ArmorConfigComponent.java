@@ -1,55 +1,55 @@
 package nl.enjarai.showmeyourskin.util;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
+import io.wispforest.endec.impl.KeyedEndec;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
-import nl.enjarai.showmeyourskin.config.SyncedModConfigServer;
-import nl.enjarai.showmeyourskin.net.HandshakeServer;
+import nl.enjarai.showmeyourskin.config.ModConfigServer;
 import org.ladysnake.cca.api.v3.component.ComponentV3;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 public class ArmorConfigComponent implements ComponentV3, AutoSyncedComponent {
-    private ArmorConfig config;
+  private static final KeyedEndec<ArmorConfig> KEYED_CONFIG = ArmorConfig.ENDEC.keyed("config", ArmorConfig.VANILLA_VALUES);
 
-    public ArmorConfigComponent(ArmorConfig config) {
-        this.config = config;
-    }
+  private ArmorConfig config;
 
-    @Override
-    public void readData(ReadView readView){
-        readView.read("config",ArmorConfig.CODEC).ifPresent(this::setConfig);
-    }
+  public ArmorConfigComponent(ArmorConfig config) {
+    this.config = config;
+  }
 
-    @Override
-    public void writeData(WriteView writeView){
-        writeView.put("config", ArmorConfig.CODEC, config);
-    }
+  @Override
+  public void readData(ValueInput readView) {
+    setConfig(readView.get(KEYED_CONFIG));
+  }
 
-    public ArmorConfig getConfig() {
-        return config;
-    }
+  @Override
+  public void writeData(ValueOutput writeView) {
+    writeView.put(KEYED_CONFIG, config);
+  }
 
-    public void setConfig(ArmorConfig config) {
-        this.config = config;
-    }
+  public ArmorConfig getConfig() {
+    return config;
+  }
 
-    public void ensureValid() {
-        if (!SyncedModConfigServer.INSTANCE.allowNotShowInCombat()) getConfig().showInCombat = true;
-        if (!SyncedModConfigServer.INSTANCE.allowNotShowNameTag()) getConfig().showNameTag = true;
-        if (!SyncedModConfigServer.INSTANCE.allowNotForceElytraWhenFlying()) getConfig().forceElytraWhenFlying = true;
-    }
+  public void setConfig(ArmorConfig config) {
+    this.config = config;
+  }
 
-    @Override
-    public boolean shouldSyncWith(ServerPlayerEntity player) {
-        return ShowMeYourSkin.HANDSHAKE_SERVER.getHandshakeState(player) != HandshakeServer.HandshakeState.FAILED;
-    }
+  public void ensureValid() {
+    if (!ModConfigServer.INSTANCE.synced.allowNotShowInCombat()) getConfig().showInCombat = true;
+    if (!ModConfigServer.INSTANCE.synced.allowNotShowNameTag()) getConfig().showNameTag = true;
+    if (!ModConfigServer.INSTANCE.synced.allowNotForceElytraWhenFlying()) getConfig().forceElytraWhenFlying = true;
+  }
 
-    @Override
-    public boolean isRequiredOnClient() {
-        return false;
-    }
+  @Override
+  public boolean shouldSyncWith(ServerPlayer player) {
+    return ShowMeYourSkin.NET_CHANNEL.canSendToPlayer(player);
+  }
+
+  @Override
+  public boolean isRequiredOnClient() {
+    return false;
+  }
 }

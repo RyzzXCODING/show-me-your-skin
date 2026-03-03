@@ -1,36 +1,31 @@
 package nl.enjarai.showmeyourskin;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import nl.enjarai.cicada.api.conversation.ConversationManager;
-import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import nl.enjarai.cicada.api.render.RenderStateKey;
 import nl.enjarai.cicada.api.util.CicadaEntrypoint;
 import nl.enjarai.cicada.api.util.JsonSource;
 import nl.enjarai.showmeyourskin.client.ModKeyBindings;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
-import nl.enjarai.showmeyourskin.gui.ClientConfigScreen;
-import nl.enjarai.showmeyourskin.gui.ConfigScreen;
-import nl.enjarai.showmeyourskin.gui.ServerIntegratedConfigScreen;
-import nl.enjarai.showmeyourskin.net.ConfigSyncPacket;
-import nl.enjarai.showmeyourskin.net.HandshakeClient;
+import nl.enjarai.showmeyourskin.config.SyncedModConfig;
+import nl.enjarai.showmeyourskin.gui.ArmorConfigScreen;
 import nl.enjarai.showmeyourskin.net.SettingsUpdatePacket;
 import org.jetbrains.annotations.Nullable;
 
 public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypoint {
-	public static final HandshakeClient HANDSHAKE_CLIENT =
-			new HandshakeClient(config -> {});
 	public static final RenderStateKey<Entity> ENTITY_RENDER_STATE_KEY = RenderStateKey.of(
 			ShowMeYourSkin.id("entity"),
 			null
 	);
+
+	public static SyncedModConfig serverConfig = null;
 
 	@Override
 	public void onInitializeClient() {
@@ -39,43 +34,46 @@ public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypo
 		ModKeyBindings.register();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
 
-		// Preload the dummy player for the config screen to avoid lag spikes later.
-		ClientLifecycleEvents.CLIENT_STARTED.register((client) -> DummyClientPlayerEntity.getInstance());
-
-		initHandshake();
+		initNetworking();
 	}
 
-	private void initHandshake() {
-		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			ClientPlayNetworking.registerReceiver(ConfigSyncPacket.PACKET_ID, (packet, ctx) -> {
-				ctx.responseSender().sendPacket(HANDSHAKE_CLIENT.handleConfigSync(packet));
-			});
-		});
-
+	private void initNetworking() {
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-			HANDSHAKE_CLIENT.reset();
+			serverConfig = null;
 		});
 	}
 
 	public static void syncToServer(ArmorConfig config) {
-		var player = MinecraftClient.getInstance().player;
+		if (!ShowMeYourSkin.NET_CHANNEL.canSendToServer()) {
+			return;
+		}
+
+		var player = Minecraft.getInstance().player;
 		if (player != null) {
 			var component = player.getComponent(Components.ARMOR_CONFIG);
 			component.setConfig(config);
 
-			ClientPlayNetworking.send(new SettingsUpdatePacket(config));
+			ShowMeYourSkin.NET_CHANNEL.clientHandle().send(new SettingsUpdatePacket(config));
 		}
 	}
 
-	public static ConfigScreen createConfigScreen(@Nullable Screen parent) {
-		if (HANDSHAKE_CLIENT.getConfig().isPresent()) {
-			return new ServerIntegratedConfigScreen(parent);
+	public static ArmorConfigScreen createConfigScreen(@Nullable Screen parent) {
+		var player = Minecraft.getInstance().player;
+		if (ShowMeYourSkin.NET_CHANNEL.canSendToServer() && player != null) {
+			var component = player.getComponent(Components.ARMOR_CONFIG);
+			return new ArmorConfigScreen(
+				component.getConfig(), player, true,
+				Component.translatable("gui.showmeyourskin.armorScreen.synced"), parent
+			);
 		} else {
-			return new ClientConfigScreen(parent);
+			return new ArmorConfigScreen(
+				ModConfig.INSTANCE.global, player, false,
+				Component.translatable("gui.showmeyourskin.armorScreen.global"), parent
+			);
 		}
 	}
 
-	public void tick(MinecraftClient client) {
+	public void tick(Minecraft client) {
 		ModKeyBindings.tick(client);
 	}
 

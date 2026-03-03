@@ -8,8 +8,8 @@ import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 
 @Environment(EnvType.CLIENT)
 public class ModMenuIntegration implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return ShowMeYourSkinClient::createConfigScreen;
-    }
+  @Override
+  public ConfigScreenFactory<?> getModConfigScreenFactory() {
+    return ShowMeYourSkinClient::createConfigScreen;
+  }
 }

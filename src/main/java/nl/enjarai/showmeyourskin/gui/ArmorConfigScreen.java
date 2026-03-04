@@ -2,19 +2,17 @@ package nl.enjarai.showmeyourskin.gui;
 
 import io.wispforest.owo.braid.core.Alignment;
 import io.wispforest.owo.braid.core.BraidScreen;
+import io.wispforest.owo.braid.framework.widget.Widget;
 import io.wispforest.owo.braid.widgets.basic.Align;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.network.chat.Component;
-import nl.enjarai.showmeyourskin.config.ArmorConfig;
 
 public class ArmorConfigScreen extends BraidScreen {
   private final Screen parent;
 
-  public ArmorConfigScreen(ArmorConfig armorConfig, AbstractClientPlayer player, boolean synced, Component title, Screen parent) {
+  public ArmorConfigScreen(Widget widget, Screen parent) {
     super(new Align(
       Alignment.CENTER,
-      new ArmorConfigWidget(armorConfig, player, synced, title)
+      widget
     ));
     this.parent = parent;
   }

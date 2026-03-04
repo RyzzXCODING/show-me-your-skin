@@ -72,9 +72,14 @@ public class PieceConfigWidget extends StatefulWidget {
               new IconCheckbox(
                 ShowMeYourSkin.id("button/glint"),
                 ShowMeYourSkin.id("button/glint_disabled"),
-                widget().pieceConfig.glint,
+                widget().pieceConfig.glint && (widget().pieceConfig.base || widget().pieceConfig.trim),
                 true,
-                value -> update(() -> widget().pieceConfig.glint = value)
+                value -> update(() -> {
+                  widget().pieceConfig.glint = value;
+                  if (!(widget().pieceConfig.base || widget().pieceConfig.trim)) {
+                    widget().pieceConfig.setAll(true);
+                  }
+                })
               )
             )
           )
@@ -89,7 +94,7 @@ public class PieceConfigWidget extends StatefulWidget {
 
     boolean toggleAll() {
       setState(() -> {
-        widget().pieceConfig.setAll(!widget().pieceConfig.base && !widget().pieceConfig.trim && !widget().pieceConfig.glint);
+        widget().pieceConfig.setAll(!widget().pieceConfig.base && !widget().pieceConfig.trim);
       });
       widget().onUpdate.run();
       return true;

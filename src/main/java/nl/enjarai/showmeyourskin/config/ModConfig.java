@@ -58,8 +58,26 @@ public class ModConfig extends AbstractModConfig {
   }
 
   public ArmorConfig getApplicable(UUID uuid) {
+    if (!globalEnabled) {
+      return ArmorConfig.VANILLA_VALUES;
+    }
+
     var applicable = getOverrideOrGlobal(uuid);
-    return !globalEnabled || applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid) ? ArmorConfig.VANILLA_VALUES : applicable;
+    if (applicable.showInCombat && CombatLogger.INSTANCE.isInCombat(uuid)) {
+      return ArmorConfig.VANILLA_VALUES;
+    }
+
+    applicable = applicable.copy();
+
+    var level = Minecraft.getInstance().level;
+    if (applicable.forceElytraWhenFlying && level != null) {
+      var player = level.getPlayerByUUID(uuid);
+      if (player != null && player.isFallFlying()) {
+        applicable.elytra = ArmorConfig.PieceConfig.VANILLA_VALUES;
+      }
+    }
+
+    return applicable;
   }
 
   public ArmorConfig getOverride(UUID uuid) {

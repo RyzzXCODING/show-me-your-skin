@@ -1,6 +1,7 @@
 package nl.enjarai.showmeyourskin.mixin;
 
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
@@ -32,10 +33,10 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
             at = @At("HEAD")
     )
     private <T extends LivingEntity, S extends LivingEntityRenderState> void showmeyourskin$captureEntity(T livingEntity, S livingEntityRenderState, float f, CallbackInfo ci){
-        var entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(livingEntityRenderState);
-        if (entity != null) {
+//        var entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(livingEntityRenderState);
+//        if (entity != null) {
 //            IWishMixinAllowedForPublicStaticFields.currentEntity = entity;
-        }
+//        }
     }
 
     @Inject(
@@ -43,6 +44,8 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
             at = @At("TAIL")
     )
     private void showmeyourskin$updateRenderState(LivingEntity livingEntity, LivingEntityRenderState livingEntityRenderState, float f, CallbackInfo ci) {
-        ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.put(livingEntityRenderState, livingEntity);
+        if (livingEntityRenderState instanceof AvatarRenderState renderState) {
+            renderState.setData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY, ModConfig.INSTANCE.getApplicable(livingEntity.getUUID()));
+        }
     }
 }

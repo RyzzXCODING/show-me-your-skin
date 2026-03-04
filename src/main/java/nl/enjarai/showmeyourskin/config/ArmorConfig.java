@@ -11,9 +11,9 @@ public class ArmorConfig {
     ArmorPieceConfig.ENDEC.fieldOf("chest", c -> c.chest),
     ArmorPieceConfig.ENDEC.fieldOf("legs", c -> c.legs),
     ArmorPieceConfig.ENDEC.fieldOf("feet", c -> c.feet),
-    OtherPieceConfig.ENDEC.fieldOf("elytra", c -> c.elytra),
-    OtherPieceConfig.ENDEC.fieldOf("shield", c -> c.shield),
-    OtherPieceConfig.ENDEC.fieldOf("hat", c -> c.hat),
+    PieceConfig.ENDEC.fieldOf("elytra", c -> c.elytra),
+    PieceConfig.ENDEC.fieldOf("shield", c -> c.shield),
+    PieceConfig.ENDEC.fieldOf("hat", c -> c.hat),
     Endec.BOOLEAN.fieldOf("show_in_combat", c -> c.showInCombat),
     Endec.BOOLEAN.fieldOf("show_name_tag", c -> c.showNameTag),
     Endec.BOOLEAN.fieldOf("force_elytra_when_flying", c -> c.forceElytraWhenFlying),
@@ -24,9 +24,9 @@ public class ArmorConfig {
   public ArmorPieceConfig chest = new ArmorPieceConfig();
   public ArmorPieceConfig legs = new ArmorPieceConfig();
   public ArmorPieceConfig feet = new ArmorPieceConfig();
-  public OtherPieceConfig elytra = new OtherPieceConfig();
-  public OtherPieceConfig shield = new OtherPieceConfig();
-  public OtherPieceConfig hat = new OtherPieceConfig();
+  public PieceConfig elytra = new PieceConfig();
+  public PieceConfig shield = new PieceConfig();
+  public PieceConfig hat = new PieceConfig();
   public boolean showInCombat = true;
   public boolean showNameTag = true;
   public boolean forceElytraWhenFlying = true;
@@ -34,7 +34,7 @@ public class ArmorConfig {
   public ArmorConfig() {
   }
 
-  public ArmorConfig(ArmorPieceConfig head, ArmorPieceConfig chest, ArmorPieceConfig legs, ArmorPieceConfig feet, OtherPieceConfig elytra, OtherPieceConfig shield, OtherPieceConfig hat, boolean showInCombat, boolean showNameTag, boolean forceElytraWhenFlying) {
+  public ArmorConfig(ArmorPieceConfig head, ArmorPieceConfig chest, ArmorPieceConfig legs, ArmorPieceConfig feet, PieceConfig elytra, PieceConfig shield, PieceConfig hat, boolean showInCombat, boolean showNameTag, boolean forceElytraWhenFlying) {
     this.head = head;
     this.chest = chest;
     this.legs = legs;
@@ -60,23 +60,24 @@ public class ArmorConfig {
   public void ensureValid() {
   }
 
-  public static class ArmorPieceConfig {
+  public ArmorConfig copy() {
+    return new ArmorConfig(head.copy(), chest.copy(), legs.copy(), feet.copy(), elytra.copy(), shield.copy(), hat.copy(), showInCombat, showNameTag, forceElytraWhenFlying);
+  }
+
+  public static class ArmorPieceConfig extends PieceConfig {
     public static final Endec<ArmorPieceConfig> ENDEC = StructEndecBuilder.of(
       Endec.BOOLEAN.fieldOf("base", c -> c.base),
-      Endec.BOOLEAN.fieldOf("trim", c -> c.trim),
       Endec.BOOLEAN.fieldOf("glint", c -> c.glint),
+      Endec.BOOLEAN.fieldOf("trim", c -> c.trim),
       ArmorPieceConfig::new
     );
     public static final ArmorPieceConfig VANILLA_VALUES = new ArmorPieceConfig();
 
-    public boolean base = true;
     public boolean trim = true;
-    public boolean glint = true;
 
-    public ArmorPieceConfig(boolean base, boolean trim, boolean glint) {
-      this.base = base;
+    public ArmorPieceConfig(boolean base, boolean glint, boolean trim) {
+      super(base, glint);
       this.trim = trim;
-      this.glint = glint;
     }
 
     public ArmorPieceConfig() {
@@ -88,12 +89,17 @@ public class ArmorConfig {
       this.glint = value;
     }
 
+    @Override
+    public boolean trim() {
+      return trim;
+    }
+
     public ArmorPieceConfig copy() {
-      return new ArmorPieceConfig(base, trim, glint);
+      return new ArmorPieceConfig(base, glint, trim);
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
       if (!(o instanceof ArmorPieceConfig that)) return false;
 
       return base == that.base && trim == that.trim && glint == that.glint;
@@ -108,23 +114,23 @@ public class ArmorConfig {
     }
   }
 
-  public static class OtherPieceConfig {
-    public static final Endec<OtherPieceConfig> ENDEC = StructEndecBuilder.of(
+  public static class PieceConfig {
+    public static final Endec<PieceConfig> ENDEC = StructEndecBuilder.of(
       Endec.BOOLEAN.fieldOf("base", c -> c.base),
       Endec.BOOLEAN.fieldOf("glint", c -> c.glint),
-      OtherPieceConfig::new
+      PieceConfig::new
     );
-    public static final OtherPieceConfig VANILLA_VALUES = new OtherPieceConfig();
+    public static final PieceConfig VANILLA_VALUES = new PieceConfig();
 
     public boolean base = true;
     public boolean glint = true;
 
-    public OtherPieceConfig(boolean base, boolean glint) {
+    public PieceConfig(boolean base, boolean glint) {
       this.base = base;
       this.glint = glint;
     }
 
-    public OtherPieceConfig() {
+    public PieceConfig() {
     }
 
     public void setAll(boolean value) {
@@ -132,13 +138,25 @@ public class ArmorConfig {
       this.glint = value;
     }
 
-    public OtherPieceConfig copy() {
-      return new OtherPieceConfig(base, glint);
+    public boolean base() {
+      return base;
+    }
+
+    public boolean trim() {
+      return true;
+    }
+
+    public boolean glint() {
+      return glint;
+    }
+
+    public PieceConfig copy() {
+      return new PieceConfig(base, glint);
     }
 
     @Override
-    public final boolean equals(Object o) {
-      if (!(o instanceof OtherPieceConfig that)) return false;
+    public boolean equals(Object o) {
+      if (!(o instanceof PieceConfig that)) return false;
 
       return base == that.base && glint == that.glint;
     }

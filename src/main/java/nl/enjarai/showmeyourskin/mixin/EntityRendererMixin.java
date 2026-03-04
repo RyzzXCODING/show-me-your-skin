@@ -19,7 +19,7 @@ public class EntityRendererMixin {
             at = @At("HEAD")
     )
     private <E extends Entity, S extends EntityRenderState> void captureEntityContext(S renderState, CameraRenderState cameraRenderState, double d, double e, double f, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CallbackInfo ci) {
-        var entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(renderState);
+//        var entity = ShowMeYourSkinClient.ENTITY_RENDER_STATE_KEY.get(renderState);
 //        if (entity instanceof PlayerEntity) {
 //            IWishMixinAllowedForPublicStaticFields.currentEntity = entity;
 //        }

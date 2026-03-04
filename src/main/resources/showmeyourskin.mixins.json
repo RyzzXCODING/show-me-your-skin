@@ -10,8 +10,14 @@
     "defaultRequire": 1
   },
   "client": [
+    "ClientMannequinAccessor",
     "EntityRendererMixin",
     "LivingEntityMixin",
-    "LivingEntityRendererMixin"
+    "LivingEntityRendererMixin",
+    "armor.EquipmentLayerRendererMixin",
+    "hat.CustomHeadLayerMixin",
+    "hat.GuiMixin",
+    "hat.ItemStackRenderStateAccessor",
+    "shield.ItemInHandLayerMixin"
   ]
 }

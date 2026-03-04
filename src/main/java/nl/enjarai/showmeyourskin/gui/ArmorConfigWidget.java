@@ -7,24 +7,16 @@ import io.wispforest.owo.braid.framework.widget.StatefulWidget;
 import io.wispforest.owo.braid.framework.widget.Widget;
 import io.wispforest.owo.braid.widgets.basic.*;
 import io.wispforest.owo.braid.widgets.flex.*;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.network.chat.Component;
-import nl.enjarai.showmeyourskin.config.ArmorConfig;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ArmorConfigWidget extends StatefulWidget {
-  private final ArmorConfig armorConfig;
-  private final AbstractClientPlayer player;
+  private final PlayerOption playerOption;
   private final boolean synced;
-  private final Component title;
 
-  public ArmorConfigWidget(ArmorConfig armorConfig, @Nullable AbstractClientPlayer player, boolean synced, Component title) {
-    this.armorConfig = armorConfig;
-    this.player = player;
+  public ArmorConfigWidget(PlayerOption playerOption, boolean synced) {
+    this.playerOption = playerOption;
     this.synced = synced;
-    this.title = title;
   }
 
   @Override
@@ -53,15 +45,15 @@ public class ArmorConfigWidget extends StatefulWidget {
                       new Flexible(
                         new Constrain(
                           Constraints.ofMinWidth(78),
-                          new ArmorControlsWidget(widget().armorConfig, widget().synced)
+                          new ArmorControlsWidget(widget().playerOption.armorConfig(), widget().synced)
                         )
                       ),
-                      new AdditionalOptionsWidget(widget().armorConfig)
+                      new AdditionalOptionsWidget(widget().playerOption.armorConfig(), widget().synced)
                     )
                   )
                 ),
                 new Flexible(
-                  new PreviewWidget(widget().player, widget().title)
+                  new PreviewWidget(widget().playerOption)
                 )
               )
             )

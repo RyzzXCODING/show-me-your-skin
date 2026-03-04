@@ -14,7 +14,6 @@ import io.wispforest.owo.braid.widgets.label.Label;
 import io.wispforest.owo.braid.widgets.label.LabelStyle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
@@ -22,12 +21,12 @@ import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import java.util.List;
 
 public class OtherConfigWidget extends StatefulWidget {
-  private final ArmorConfig.OtherPieceConfig pieceConfig;
+  private final ArmorConfig.PieceConfig pieceConfig;
   private final Component label;
   private final Runnable onUpdate;
   private final String texture;
 
-  public OtherConfigWidget(ArmorConfig.OtherPieceConfig pieceConfig, Component label, Runnable onUpdate, String texture) {
+  public OtherConfigWidget(ArmorConfig.PieceConfig pieceConfig, Component label, Runnable onUpdate, String texture) {
     this.pieceConfig = pieceConfig;
     this.label = label;
     this.onUpdate = onUpdate;
@@ -68,9 +67,14 @@ public class OtherConfigWidget extends StatefulWidget {
               new IconCheckbox(
                 ShowMeYourSkin.id("button/glint"),
                 ShowMeYourSkin.id("button/glint_disabled"),
-                widget().pieceConfig.glint,
+                widget().pieceConfig.glint && widget().pieceConfig.base,
                 true,
-                value -> update(() -> widget().pieceConfig.glint = value)
+                value -> update(() -> {
+                  widget().pieceConfig.glint = value;
+                  if (!widget().pieceConfig.base) {
+                    widget().pieceConfig.setAll(true);
+                  }
+                })
               )
             )
           )
@@ -85,7 +89,7 @@ public class OtherConfigWidget extends StatefulWidget {
 
     boolean toggleAll() {
       setState(() -> {
-        widget().pieceConfig.setAll(!widget().pieceConfig.base && !widget().pieceConfig.glint);
+        widget().pieceConfig.setAll(!widget().pieceConfig.base);
       });
       widget().onUpdate.run();
       return true;

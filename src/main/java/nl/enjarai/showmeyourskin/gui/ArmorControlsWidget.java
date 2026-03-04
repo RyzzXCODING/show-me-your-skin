@@ -14,6 +14,7 @@ import io.wispforest.owo.braid.widgets.scroll.*;
 import net.minecraft.network.chat.Component;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class ArmorControlsWidget extends StatefulWidget {
     public void update() {
       if (widget().synced) {
         ShowMeYourSkinClient.syncToServer(widget().armorConfig);
+      } else {
+        ModConfig.INSTANCE.save();
       }
     }
   }

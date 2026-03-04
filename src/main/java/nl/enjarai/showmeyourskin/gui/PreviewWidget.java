@@ -13,11 +13,10 @@ import io.wispforest.owo.braid.widgets.label.LabelStyle;
 import io.wispforest.owo.braid.widgets.object.EntityWidget;
 import io.wispforest.owo.braid.widgets.stack.Stack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.entity.ClientMannequin;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.Mannequin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
-import org.joml.Matrix3x2f;
 
 import java.time.Duration;
 
@@ -35,17 +34,25 @@ public class PreviewWidget extends StatefulWidget {
 
   static class State extends WidgetState<PreviewWidget> {
     private Mannequin player;
+    private boolean ready;
 
     @Override
     public void init() {
       player = widget().playerOption.constructMannequin();
 
-      scheduleDelayedCallback(Duration.ofMillis(50), this::tickEntity);
+      tickEntity();
     }
 
     public void tickEntity() {
       if (player != null) {
         player.tick();
+
+        var nowReady = ((ClientMannequin) player).getSkin() != ClientMannequin.DEFAULT_SKIN;
+        if (nowReady != ready) {
+          setState(() -> {
+            ready = nowReady;
+          });
+        }
       }
 
       scheduleDelayedCallback(Duration.ofMillis(50), this::tickEntity);
@@ -55,6 +62,9 @@ public class PreviewWidget extends StatefulWidget {
     public void didUpdateWidget(PreviewWidget oldWidget) {
       if (!widget().playerOption.equals(oldWidget.playerOption)) {
         player = widget().playerOption.constructMannequin();
+        setState(() -> {
+          ready = false;
+        });
       }
     }
 
@@ -64,11 +74,14 @@ public class PreviewWidget extends StatefulWidget {
         ShowMeYourSkin.id("panel/dark_inset"),
         new Stack(
           player != null ?
-            new EntityWidget(1.25, player, w -> {
-              w.scaleToFit(true);
-              w.displayMode(EntityWidget.DisplayMode.CURSOR);
-              w.transform(m -> m.translate(0, -0.2f, 0));
-            }) :
+            new Padding(
+              Insets.all(1),
+              ready ? new EntityWidget(1.25, player, w -> {
+                w.scaleToFit(true);
+                w.displayMode(EntityWidget.DisplayMode.CURSOR);
+                w.transform(m -> m.translate(0, -0.2f, 0));
+              }) : EmptyWidget.INSTANCE
+            ) :
             new Padding(
               Insets.all(4),
               new Sized(

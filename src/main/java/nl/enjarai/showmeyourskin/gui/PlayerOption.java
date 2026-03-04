@@ -14,6 +14,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.mixin.ClientMannequinAccessor;
 import nl.enjarai.showmeyourskin.mixin.LivingEntityAccessor;
+import nl.enjarai.showmeyourskin.pond.ArmorConfigContraband;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -47,6 +48,8 @@ public record PlayerOption(ArmorConfig armorConfig, UUID uuid, @Nullable Abstrac
     entity.tickCount = 20;
     var pos = Minecraft.getInstance().player.position();
     entity.absSnapTo(pos.x(), pos.y(), pos.z());
+    ((ArmorConfigContraband) entity).show_me_your_skin$setArmorConfig(armorConfig);
+
     return entity;
   }
 }

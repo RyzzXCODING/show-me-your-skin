@@ -21,7 +21,7 @@ public class ModConfig extends AbstractModConfig {
   public float combatCooldown = 16;
   public float fadeOutTime = 2;
   public final ArmorConfig global = new ArmorConfig();
-  public final HashMap<UUID, ArmorConfig> overrides = new HashMap<>();
+  public final HashMap<UUID, LocalOverride> overrides = new HashMap<>();
 
 
   public ArmorConfig getOverrideOrGlobal(UUID uuid) {
@@ -34,7 +34,7 @@ public class ModConfig extends AbstractModConfig {
       var config = overrides.get(uuid);
 
       if (config != null) {
-        return config;
+        return config.config;
       }
     }
 
@@ -81,18 +81,7 @@ public class ModConfig extends AbstractModConfig {
   }
 
   public ArmorConfig getOverride(UUID uuid) {
-    return overrides.get(uuid);
-  }
-
-  public ArmorConfig getOrCreateOverride(UUID uuid) {
-    var armorConfig = getOverride(uuid);
-
-    if (armorConfig == null) {
-      armorConfig = new ArmorConfig();
-      overrides.put(uuid, armorConfig);
-    }
-
-    return armorConfig;
+    return overrides.get(uuid).config;
   }
 
   public void deleteOverride(UUID uuid) {
@@ -111,8 +100,11 @@ public class ModConfig extends AbstractModConfig {
     }
 
     global.ensureValid();
-    overrides.values().forEach(ArmorConfig::ensureValid);
+    overrides.values().forEach(o -> o.config.ensureValid());
 
     save();
+  }
+
+  public record LocalOverride(String title, ArmorConfig config) {
   }
 }

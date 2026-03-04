@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.gui.ArmorConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 public class ModKeyBindings {
@@ -34,7 +35,7 @@ public class ModKeyBindings {
 
   public static void tick(Minecraft client) {
     while (OPEN_SETTINGS.consumeClick()) {
-      client.setScreen(ShowMeYourSkinClient.createConfigScreen(null));
+      client.setScreen(ArmorConfigScreen.createConfigScreen(null));
     }
     while (GLOBAL_TOGGLE.consumeClick()) {
       ModConfig.INSTANCE.globalEnabled = !ModConfig.INSTANCE.globalEnabled;

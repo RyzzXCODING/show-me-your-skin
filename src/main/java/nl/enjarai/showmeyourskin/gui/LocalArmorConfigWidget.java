@@ -5,19 +5,15 @@ import io.wispforest.owo.braid.framework.BuildContext;
 import io.wispforest.owo.braid.framework.proxy.WidgetState;
 import io.wispforest.owo.braid.framework.widget.StatefulWidget;
 import io.wispforest.owo.braid.framework.widget.Widget;
-import io.wispforest.owo.braid.widgets.basic.IntrinsicHeight;
 import io.wispforest.owo.braid.widgets.basic.Padding;
 import io.wispforest.owo.braid.widgets.flex.CrossAxisAlignment;
 import io.wispforest.owo.braid.widgets.flex.MainAxisAlignment;
 import io.wispforest.owo.braid.widgets.flex.Row;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
-import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 
 import java.util.List;
-import java.util.UUID;
 
 public class LocalArmorConfigWidget extends StatefulWidget {
   private final List<PlayerOption> options;
@@ -45,7 +41,7 @@ public class LocalArmorConfigWidget extends StatefulWidget {
         CrossAxisAlignment.CENTER,
         new Padding(Insets.all(4)),
         List.of(
-          new PlayerListWidget(widget().options, option -> setState(() -> selectedOption = option)),
+          new PlayerListWidget(globalOption, widget().options, selectedOption, this::updateOption, this::deleteOption),
           new ArmorConfigWidget(selectedOption, false)
         )
       );
@@ -58,6 +54,27 @@ public class LocalArmorConfigWidget extends StatefulWidget {
           selectedOption = globalOption;
         });
       }
+    }
+
+    void updateOption(PlayerOption option) {
+      setState(() -> {
+        selectedOption = option;
+        if (option != globalOption) {
+          ModConfig.INSTANCE.overrides.put(option.uuid(), new ModConfig.LocalOverride(option.title().getString(), option.armorConfig()));
+          ModConfig.INSTANCE.save();
+        }
+      });
+    }
+
+    void deleteOption(PlayerOption option) {
+      setState(() -> {
+        if (option == selectedOption) {
+          selectedOption = globalOption;
+        }
+        option.armorConfig().clear();
+        ModConfig.INSTANCE.overrides.remove(option.uuid());
+        ModConfig.INSTANCE.save();
+      });
     }
   }
 }

@@ -23,6 +23,11 @@ public class ShowMeYourSkin implements ModInitializer {
     initNetworking();
   }
 
+  // TODO:
+  // - shield hiding first person
+  // - example armors
+  // - use nearby players when available
+
   private static void initNetworking() {
     NET_CHANNEL.registerClientbound(ConfigSyncPacket.class, ConfigSyncPacket::handleClient);
     NET_CHANNEL.registerServerbound(SettingsUpdatePacket.class, SettingsUpdatePacket::handleServer);

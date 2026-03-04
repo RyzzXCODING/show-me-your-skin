@@ -64,6 +64,19 @@ public class ArmorConfig {
     return new ArmorConfig(head.copy(), chest.copy(), legs.copy(), feet.copy(), elytra.copy(), shield.copy(), hat.copy(), showInCombat, showNameTag, forceElytraWhenFlying);
   }
 
+  public void clear() {
+    head = new ArmorPieceConfig();
+    chest = new ArmorPieceConfig();
+    legs = new ArmorPieceConfig();
+    feet = new ArmorPieceConfig();
+    elytra = new PieceConfig();
+    shield = new PieceConfig();
+    hat = new PieceConfig();
+    showInCombat = true;
+    showNameTag = true;
+    forceElytraWhenFlying = true;
+  }
+
   public static class ArmorPieceConfig extends PieceConfig {
     public static final Endec<ArmorPieceConfig> ENDEC = StructEndecBuilder.of(
       Endec.BOOLEAN.fieldOf("base", c -> c.base),

@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ModConfig;
+import nl.enjarai.showmeyourskin.pond.ArmorConfigContraband;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -45,7 +46,13 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     private void showmeyourskin$updateRenderState(LivingEntity livingEntity, LivingEntityRenderState livingEntityRenderState, float f, CallbackInfo ci) {
         if (livingEntityRenderState instanceof AvatarRenderState renderState) {
-            renderState.setData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY, ModConfig.INSTANCE.getApplicable(livingEntity.getUUID()));
+            var armorConfig = ModConfig.INSTANCE.getApplicable(livingEntity.getUUID());
+
+            if (livingEntity instanceof ArmorConfigContraband contraband && contraband.show_me_your_skin$getArmorConfig() != null) {
+                armorConfig = contraband.show_me_your_skin$getArmorConfig();
+            }
+
+            renderState.setData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY, armorConfig);
         }
     }
 }

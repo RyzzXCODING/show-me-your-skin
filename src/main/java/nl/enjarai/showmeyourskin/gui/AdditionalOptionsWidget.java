@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 
 import java.util.List;
@@ -84,6 +85,8 @@ public class AdditionalOptionsWidget extends StatefulWidget {
       setState(fn);
       if (widget().synced) {
         ShowMeYourSkinClient.syncToServer(widget().armorConfig);
+      } else {
+        ModConfig.INSTANCE.save();
       }
     }
 

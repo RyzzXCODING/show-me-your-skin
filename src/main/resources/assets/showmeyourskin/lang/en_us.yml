@@ -34,7 +34,7 @@ gui:
         hat: "Hat"
       glintTooltip: Enable enchantment glint
       combatTooltip: Automatically disable transparency in combat
-      nameTagTooltip: Show player name tag
+      nameTagTooltip: Show player title tag
       forceElytraWhenFlyingTooltip: Disable Elytra transparency while flying
       showElytraTooltip: Show Elytra
       shieldGlintTooltip: Show enchantment glint on shield

@@ -1,7 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.15-SNAPSHOT'
 	id 'maven-publish'
-	id "me.modmuss50.mod-publish-plugin" version "0.4.4"
+	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 	id 'me.fallenbreath.yamlang' version '1.4.1'
 }
 
@@ -81,7 +81,7 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.archives_base_name}"}
 	}
 }
 
@@ -142,6 +142,9 @@ publishMods {
 			requires {
 				slug = "cicada"
 			}
+			requires {
+				slug = "owo-lib"
+			}
 			embeds {
 				slug = "cardinal-components-api"
 			}
@@ -168,6 +171,9 @@ publishMods {
 			requires {
 				slug = "cicada"
 			}
+			requires {
+				slug = "owo-lib"
+			}
 			embeds {
 				slug = "cardinal-components-api"
 			}
@@ -175,10 +181,10 @@ publishMods {
 	}
 
 	if (providers.gradleProperty('enjaraiGithubToken').present) {
-		github {
-			repository = property('mod_github')
-			accessToken = providers.gradleProperty('enjaraiGithubToken').get()
-
+		forgejo {
+			accessToken = providers.gradleProperty('enjaraiCodebergToken').get()
+			host(new URI("https://codeberg.org"))
+			repository = property('mod_codeberg')
 			commitish = property('git_branch')
 			tagName = project.version
 		}

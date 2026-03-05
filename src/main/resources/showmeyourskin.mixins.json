@@ -18,7 +18,8 @@
     "armor.EquipmentLayerRendererMixin",
     "hat.CustomHeadLayerMixin",
     "hat.GuiMixin",
-    "hat.ItemStackRenderStateAccessor",
-    "shield.ItemInHandLayerMixin"
+    "ItemStackRenderStateAccessor",
+    "shield.ItemInHandLayerMixin",
+    "shield.ItemInHandRendererMixin"
   ]
 }

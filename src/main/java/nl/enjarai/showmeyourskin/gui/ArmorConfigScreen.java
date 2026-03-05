@@ -6,6 +6,7 @@ import io.wispforest.owo.braid.framework.widget.Widget;
 import io.wispforest.owo.braid.widgets.basic.Align;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
@@ -57,6 +58,7 @@ public class ArmorConfigScreen extends BraidScreen {
       .toList();
 
     if (player != null) {
+      //noinspection resource
       var onlineOptions = new ArrayList<>(
         player.connection.getListedOnlinePlayers().stream()
           .map(info -> new PlayerOption(
@@ -64,7 +66,7 @@ public class ArmorConfigScreen extends BraidScreen {
               ModConfig.INSTANCE.overrides.get(info.getProfile().id()).config() :
               new ArmorConfig(),
             info.getProfile().id(),
-            null,
+            (AbstractClientPlayer) player.level().getPlayerByUUID(info.getProfile().id()),
             Component.literal(info.getProfile().name())
           ))
           .toList()

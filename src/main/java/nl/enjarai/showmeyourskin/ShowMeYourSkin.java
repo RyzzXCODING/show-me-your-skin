@@ -24,7 +24,6 @@ public class ShowMeYourSkin implements ModInitializer {
   }
 
   // TODO:
-  // - shield hiding first person
   // - example armors
   // - use nearby players when available
 

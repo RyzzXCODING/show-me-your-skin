@@ -1,4 +1,4 @@
-package nl.enjarai.showmeyourskin.mixin.hat;
+package nl.enjarai.showmeyourskin.mixin;
 
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import org.spongepowered.asm.mixin.Mixin;

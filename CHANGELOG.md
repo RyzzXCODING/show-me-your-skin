@@ -1,1 +1,1 @@
-- Added compatibility with Wildfire's Female Gender Mod. (again (again))
+- Fixed a potential crash when reusing configuration files from the 1.0 versions of the mod.

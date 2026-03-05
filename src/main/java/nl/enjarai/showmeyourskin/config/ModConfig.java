@@ -7,6 +7,7 @@ import nl.enjarai.showmeyourskin.Components;
 import nl.enjarai.showmeyourskin.ShowMeYourSkin;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.util.CombatLogger;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -100,6 +101,8 @@ public class ModConfig extends AbstractModConfig {
     }
 
     global.ensureValid();
+    // Fix to remove old overrides entries
+    overrides.entrySet().removeIf(o -> o.getValue().config == null || o.getValue().title == null);
     overrides.values().forEach(o -> o.config.ensureValid());
 
     save();

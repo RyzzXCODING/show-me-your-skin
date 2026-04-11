@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.LivingEntity;
-import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.pond.ArmorConfigContraband;
@@ -24,7 +23,6 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     private void showmeyourskin$removeLabel(T livingEntity, double d, CallbackInfoReturnable<Boolean> cir) {
         if (
-                livingEntity instanceof DummyClientPlayerEntity ||
                 !ModConfig.INSTANCE.getApplicable(livingEntity.getUUID()).showNameTag
         ) cir.setReturnValue(false);
     }

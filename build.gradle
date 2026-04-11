@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.15-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
 	id 'maven-publish'
 	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 	id 'me.fallenbreath.yamlang' version '1.4.1'
@@ -19,7 +19,7 @@ repositories {
 	maven { url = "https://maven.enjarai.dev/mirrors" }
 
 	// Mod Menu repository
-	maven { url "https://maven.terraformersmc.com" }
+	maven { url = "https://maven.terraformersmc.com" }
 
 	// Cardinal Components API
 	maven {
@@ -27,33 +27,32 @@ repositories {
 		url = 'https://maven.ladysnake.org/releases'
 	}
 
-	maven { url 'https://maven.wispforest.io/releases/' }
+	maven { url = 'https://maven.wispforest.io/releases/' }
 
 	// since owo 0.13.0, jitpack is required for kdl4j
-	maven { url 'https://jitpack.io' }
+//	maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${property("deps.minecraft")}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${property("deps.fabricloader")}"
+	implementation "net.fabricmc:fabric-loader:${property("deps.fabricloader")}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}"
 
-	modImplementation("nl.enjarai:cicada-lib:${property("deps.cicada")}") {
+	implementation("nl.enjarai:cicada-lib:${property("deps.cicada")}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
 	// Mod Menu integration.
-	modImplementation "com.terraformersmc:modmenu:${property("deps.modmenu")}"
+	implementation "com.terraformersmc:modmenu:${property("deps.modmenu")}"
 
 	// Cardinal Components for shrimple™ server syncing.
-	modImplementation(include("org.ladysnake.cardinal-components-api:cardinal-components-base:${property("deps.cardinal-components-api")}"))
-	modImplementation(include("org.ladysnake.cardinal-components-api:cardinal-components-entity:${property("deps.cardinal-components-api")}"))
+	implementation(include("org.ladysnake.cardinal-components-api:cardinal-components-base:${property("deps.cardinal-components-api")}"))
+	implementation(include("org.ladysnake.cardinal-components-api:cardinal-components-entity:${property("deps.cardinal-components-api")}"))
 
-	modImplementation "io.wispforest:owo-lib:${property("deps.owo")}"
+	implementation "io.wispforest:owo-lib:${property("deps.owo")}"
 	include "io.wispforest:owo-sentinel:${property("deps.owo")}"
 }
 
@@ -66,11 +65,6 @@ processResources {
 }
 
 version = "$version+${property("deps.minecraft")}"
-
-tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 21
-}
 
 java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -112,7 +106,7 @@ loom {
 }
 
 publishMods {
-	file = remapJar.archiveFile
+	file = jar.archiveFile
 	displayName = "${property('mod_version')} for ${property('deps.minecraft')}"
 	version = project.version
 	changelog = getRootProject().file("CHANGELOG.md").text

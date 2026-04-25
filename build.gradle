@@ -73,6 +73,10 @@ java {
 	withSourcesJar()
 }
 
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archives_base_name}"}
@@ -174,7 +178,7 @@ publishMods {
 		}
 	}
 
-	if (providers.gradleProperty('enjaraiGithubToken').present) {
+	if (providers.gradleProperty('enjaraiCodebergToken').present) {
 		forgejo {
 			accessToken = providers.gradleProperty('enjaraiCodebergToken').get()
 			host(new URI("https://codeberg.org"))

@@ -1,7 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
 	id 'maven-publish'
-	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+	id "me.modmuss50.mod-publish-plugin" version "2.2.0"
 	id 'me.fallenbreath.yamlang' version '1.4.1'
 }
 
@@ -153,6 +153,8 @@ publishMods {
 		curseforge {
 			projectId = property('mod_curseforge')
 			accessToken = providers.gradleProperty('enjaraiCurseforgeToken').get()
+			client = true
+			server = true
 
 			if (min == max) {
 				minecraftVersions.add(min)

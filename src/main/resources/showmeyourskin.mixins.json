@@ -19,7 +19,7 @@
     "LivingEntityRendererMixin",
     "armor.EquipmentLayerRendererMixin",
     "hat.CustomHeadLayerMixin",
-    "hat.GuiMixin",
+    "hat.HudMixin",
     "shield.ItemInHandLayerMixin",
     "shield.ItemInHandRendererMixin"
   ]

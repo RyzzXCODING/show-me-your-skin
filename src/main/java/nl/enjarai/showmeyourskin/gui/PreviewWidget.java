@@ -10,7 +10,8 @@ import io.wispforest.owo.braid.framework.widget.Widget;
 import io.wispforest.owo.braid.widgets.basic.*;
 import io.wispforest.owo.braid.widgets.label.Label;
 import io.wispforest.owo.braid.widgets.label.LabelStyle;
-import io.wispforest.owo.braid.widgets.object.EntityWidget;
+import io.wispforest.owo.braid.widgets.object.entity.EntityDisplayMode;
+import io.wispforest.owo.braid.widgets.object.entity.EntityWidget;
 import io.wispforest.owo.braid.widgets.stack.Stack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.entity.ClientMannequin;
@@ -78,7 +79,7 @@ public class PreviewWidget extends StatefulWidget {
               Insets.all(1),
               ready ? new EntityWidget(1.25, player, w -> {
                 w.scaleToFit(true);
-                w.displayMode(EntityWidget.DisplayMode.CURSOR);
+                w.displayMode(EntityDisplayMode.CURSOR);
                 w.transform(m -> m.translate(0, -0.2f, 0));
               }) : EmptyWidget.INSTANCE
             ) :

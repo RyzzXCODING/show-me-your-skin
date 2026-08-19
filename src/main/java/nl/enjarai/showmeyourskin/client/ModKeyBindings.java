@@ -34,7 +34,7 @@ public class ModKeyBindings {
 
   public static void tick(Minecraft client) {
     while (OPEN_SETTINGS.consumeClick()) {
-      client.setScreen(ArmorConfigScreen.createConfigScreen(null));
+      client.gui.setScreen(ArmorConfigScreen.createConfigScreen(null));
     }
     while (GLOBAL_TOGGLE.consumeClick()) {
       ModConfig.INSTANCE.globalEnabled = !ModConfig.INSTANCE.globalEnabled;

@@ -74,7 +74,7 @@ public class SyncedArmorConfigWidget extends StatefulWidget {
                 Component.translatable("gui.showmeyourskin.armorScreen.overridesConfigure"),
                 new Clickable(
                   () -> {
-                    Minecraft.getInstance().setScreen(ArmorConfigScreen.createLocalConfigScreen(BraidScreen.maybeOf(context)));
+                    Minecraft.getInstance().gui.setScreen(ArmorConfigScreen.createLocalConfigScreen(BraidScreen.maybeOf(context)));
                     return true;
                   },
                   SoundEvents.UI_BUTTON_CLICK.value(),

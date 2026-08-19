@@ -1,1 +1,1 @@
-- Fixed java compile target.
+- Updated to 26.2.

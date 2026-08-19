@@ -8,7 +8,7 @@ import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.Mannequin;
@@ -42,14 +42,14 @@ public record PlayerOption(ArmorConfig armorConfig, UUID uuid, @Nullable Abstrac
     Mannequin entity;
 
     if (player != null) {
-      entity = Mannequin.create(EntityType.MANNEQUIN, this.player.level());
+      entity = Mannequin.create(EntityTypes.MANNEQUIN, this.player.level());
       ((LivingEntityAccessor) entity).setEquipment(((LivingEntityAccessor) this.player).getEquipment());
       ((LivingEntityAccessor) entity).setElytraAnimationState(((LivingEntityAccessor) this.player).getElytraAnimationState());
       entity.setComponent(DataComponents.PROFILE, ResolvableProfile.createResolved(this.player.getGameProfile()));
     } else if (Minecraft.getInstance().level != null) {
       var level = Minecraft.getInstance().level;
 
-      entity = Mannequin.create(EntityType.MANNEQUIN, level);
+      entity = Mannequin.create(EntityTypes.MANNEQUIN, level);
       entity.setComponent(DataComponents.PROFILE, ResolvableProfile.createUnresolved(uuid));
       ((ClientMannequinAccessor) entity).invokeUpdateSkin();
 
@@ -66,6 +66,13 @@ public record PlayerOption(ArmorConfig armorConfig, UUID uuid, @Nullable Abstrac
     var pos = Minecraft.getInstance().player.position();
     entity.absSnapTo(pos.x(), pos.y(), pos.z());
     ((ArmorConfigContraband) entity).show_me_your_skin$setArmorConfig(armorConfig);
+
+    // Working around a change in 26.2
+    int id = 0;
+    while (id == 0 || this.player.level().getEntity(id) != null) {
+      id = this.player.level().getRandom().nextInt();
+    }
+    entity.setId(id);
 
     return entity;
   }

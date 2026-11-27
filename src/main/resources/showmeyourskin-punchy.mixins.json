@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "nl.enjarai.showmeyourskin.mixin.compat.punchy",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "PunchyArmorArmMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

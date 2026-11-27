@@ -1,3 +1,4 @@
+- Fixed first-person armor sleeves staying behind when Punchy! moves the hands.
 - Fixed first-person armor appearing detached from the visible arm with first-person armor mods on 1.21.11.
 - Armor settings now also apply to first-person armor submissions.
 - Fixed armor models not following transformed player arms and bodies on 1.21.11.

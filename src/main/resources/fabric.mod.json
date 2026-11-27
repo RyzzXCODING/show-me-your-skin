@@ -36,7 +36,8 @@
     ]
   },
   "mixins": [
-    "showmeyourskin.mixins.json"
+    "showmeyourskin.mixins.json",
+    "showmeyourskin-punchy.mixins.json"
   ],
   "accessWidener" : "showmeyourskin.accesswidener",
 

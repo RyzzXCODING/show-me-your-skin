@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
@@ -26,7 +27,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.util.ArmorModelPoses;
+import nl.enjarai.showmeyourskin.util.ArmorModelPoses.ArmorPoseSnapshot;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,12 +53,33 @@ public class EquipmentLayerRendererMixin {
     // Armor models are submitted as separate models. Remember which model belongs to which player so that the
     // animated player pose can be reapplied after the armor model's own setupAnim runs.
     var sourcePose = renderState.getData(ShowMeYourSkinClient.ARMOR_SOURCE_POSE_KEY);
-    var modelPoses = renderState.getData(ShowMeYourSkinClient.ARMOR_MODEL_POSES_KEY);
-    if (sourcePose != null && modelPoses != null && model instanceof HumanoidModel<?> armorModel) {
-      modelPoses.put(armorModel, sourcePose);
+    if (model instanceof HumanoidModel<?> armorModel) {
+      var modelPoses = renderState.getData(ShowMeYourSkinClient.ARMOR_MODEL_POSES_KEY);
+      if (modelPoses == null) {
+        modelPoses = new ArmorModelPoses();
+        renderState.setData(ShowMeYourSkinClient.ARMOR_MODEL_POSES_KEY, modelPoses);
+      }
+
+      if (sourcePose != null) {
+        // Third person: the player model has already been animated and HumanoidArmorLayer captured that pose.
+        modelPoses.put(armorModel, sourcePose);
+      } else if (renderState instanceof AvatarRenderState && Minecraft.getInstance().player != null) {
+        // First person: compatibility mods (e.g. Armored Arms) build a fresh player render state and pose the
+        // armor model's arm themselves before submitting it. Minecraft calls setupAnim again when the deferred
+        // submission is drawn, which discards that pose and leaves the armor detached from the visible arm.
+        // Snapshot the pose they submitted so ModelFeatureRendererMixin can restore it after setupAnim.
+        // Non-player entities never enter this branch: their normal setupAnim animation must stay intact.
+        modelPoses.put(armorModel, ArmorPoseSnapshot.capture(armorModel));
+      }
     }
 
     var config = renderState.getData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY);
+    if (config == null && sourcePose == null && renderState instanceof AvatarRenderState
+            && Minecraft.getInstance().player != null) {
+      // First-person armor submissions use a fresh state, so resolve the local player's settings for them.
+      config = ModConfig.INSTANCE.getApplicable(Minecraft.getInstance().player.getUUID());
+      renderState.setData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY, config);
+    }
     if (config == null) {
       return;
     }

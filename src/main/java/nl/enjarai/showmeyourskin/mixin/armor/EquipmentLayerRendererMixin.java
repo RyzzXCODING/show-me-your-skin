@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import nl.enjarai.showmeyourskin.ShowMeYourSkinClient;
 import nl.enjarai.showmeyourskin.config.ArmorConfig;
+import nl.enjarai.showmeyourskin.util.ArmorModelPoses;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,6 +45,14 @@ public class EquipmentLayerRendererMixin {
                           int j, int k, CallbackInfo ci, @Share("armor_config") LocalRef<ArmorConfig.PieceConfig> armorConfig) {
     if (!(object instanceof LivingEntityRenderState renderState)) {
       return;
+    }
+
+    // Armor models are submitted as separate models. Remember which model belongs to which player so that the
+    // animated player pose can be reapplied after the armor model's own setupAnim runs.
+    var sourcePose = renderState.getData(ShowMeYourSkinClient.ARMOR_SOURCE_POSE_KEY);
+    var modelPoses = renderState.getData(ShowMeYourSkinClient.ARMOR_MODEL_POSES_KEY);
+    if (sourcePose != null && modelPoses != null && model instanceof HumanoidModel<?> armorModel) {
+      modelPoses.put(armorModel, sourcePose);
     }
 
     var config = renderState.getData(ShowMeYourSkinClient.ARMOR_CONFIG_KEY);

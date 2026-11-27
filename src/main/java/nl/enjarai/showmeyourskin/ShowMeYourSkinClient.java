@@ -13,9 +13,12 @@ import nl.enjarai.showmeyourskin.config.ArmorConfig;
 import nl.enjarai.showmeyourskin.config.ModConfig;
 import nl.enjarai.showmeyourskin.config.SyncedModConfig;
 import nl.enjarai.showmeyourskin.net.SettingsUpdatePacket;
+import nl.enjarai.showmeyourskin.util.ArmorModelPoses;
 
 public class ShowMeYourSkinClient implements ClientModInitializer, CicadaEntrypoint {
   public static final RenderStateDataKey<ArmorConfig> ARMOR_CONFIG_KEY = RenderStateDataKey.create();
+  public static final RenderStateDataKey<ArmorModelPoses.ArmorPoseSnapshot> ARMOR_SOURCE_POSE_KEY = RenderStateDataKey.create();
+  public static final RenderStateDataKey<ArmorModelPoses> ARMOR_MODEL_POSES_KEY = RenderStateDataKey.create();
 
   public static SyncedModConfig serverConfig = null;
 

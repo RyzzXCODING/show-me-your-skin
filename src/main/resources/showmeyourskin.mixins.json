@@ -18,6 +18,8 @@
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "armor.EquipmentLayerRendererMixin",
+    "armor.HumanoidArmorLayerMixin",
+    "armor.ModelFeatureRendererMixin",
     "hat.CustomHeadLayerMixin",
     "hat.GuiMixin",
     "shield.ItemInHandLayerMixin",

@@ -180,7 +180,7 @@ publishMods {
 		}
 	}
 
-	if (providers.gradleProperty('enjaraiGithubToken').present) {
+	if (providers.gradleProperty('enjaraiCodebergToken').present) {
 		forgejo {
 			accessToken = providers.gradleProperty('enjaraiCodebergToken').get()
 			host(new URI("https://codeberg.org"))
